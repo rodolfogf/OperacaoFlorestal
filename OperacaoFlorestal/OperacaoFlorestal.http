@@ -1,0 +1,6 @@
+@OperacaoFlorestal_HostAddress = http://localhost:5103
+
+GET {{OperacaoFlorestal_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
