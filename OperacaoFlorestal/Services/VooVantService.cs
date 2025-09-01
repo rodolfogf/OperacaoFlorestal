@@ -7,14 +7,26 @@ namespace OperacaoFlorestal.Services
     public class VooVantService : IVooVantService
     {
         private readonly IVooVantRepository _vooVantRepository;
+        private readonly IMaquinarioService _maquinarioService;
 
-        public VooVantService(IVooVantRepository vooVantRepository)
+        public VooVantService(IVooVantRepository vooVantRepository, IMaquinarioService maquinarioService)
         {
             _vooVantRepository ??= vooVantRepository;
+            _maquinarioService = maquinarioService;
         }
 
         public async Task<VooVant> AddVooVantAsync(VooVant vooVant)
         {
+            var maquinario = await _maquinarioService.GetMaquinarioById(vooVant.IdMaquinario);
+
+            if (maquinario == null)
+            {
+                throw new KeyNotFoundException($"Maquinario com ID {vooVant.IdMaquinario} não encontrado.");
+            }
+
+            if (maquinario is not MaquinarioVANT)
+                throw new InvalidOperationException("Não é possível cadastrar voo para um maquinário que não seja VANT.");
+
             try
             {
                 return await _vooVantRepository.AddAsync(vooVant);

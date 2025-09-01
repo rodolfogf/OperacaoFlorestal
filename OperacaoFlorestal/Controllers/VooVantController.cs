@@ -44,9 +44,9 @@ namespace OperacaoFlorestal.Controllers
         {
             try
             {
-                var paciente = await _vooVantService.GetVooVantById(id);
-                var pacienteDto = _mapper.Map<ReadVooVantDTO>(paciente);
-                return Ok(pacienteDto);
+                var vooVant = await _vooVantService.GetVooVantById(id);
+                var vooVantDto = _mapper.Map<ReadVooVantDTO>(vooVant);
+                return Ok(vooVantDto);
             }
             catch (KeyNotFoundException ex)
             {
@@ -63,7 +63,7 @@ namespace OperacaoFlorestal.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CadastrarPaciente([FromBody] CreateVooVantDTO vooVantDto)
+        public async Task<IActionResult> CadastrarVooVant([FromBody] CreateVooVantDTO vooVantDto)
         {
             try
             {
@@ -81,6 +81,15 @@ namespace OperacaoFlorestal.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+            catch (InvalidOperationException ex) // maquinario não é VANT
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (KeyNotFoundException ex) // maquinario não encontrado
+            {
+                return NotFound(ex.Message);
+            }
+
             catch (Exception ex)
             {
                 return StatusCode(500, $"Erro interno ao cadastrar voo de Vant: {ex.Message}");
@@ -88,11 +97,11 @@ namespace OperacaoFlorestal.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> AtualizaPaciente(int id, [FromBody] UpdateVooVantDTO pacienteDto)
+        public async Task<IActionResult> AtualizaVoovant(int id, [FromBody] UpdateVooVantDTO vooVantDto)
         {
             try
             {
-                var vooVantAtualizar = _mapper.Map<VooVant>(pacienteDto);
+                var vooVantAtualizar = _mapper.Map<VooVant>(vooVantDto);
                 var result = await _vooVantService.UpdateVooVantAsync(id, vooVantAtualizar);
                 var readDto = _mapper.Map<ReadVooVantDTO>(result);
 
@@ -108,7 +117,7 @@ namespace OperacaoFlorestal.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Erro interno ao atualizar paciente: {ex.Message}");
+                return StatusCode(500, $"Erro interno ao atualizar voo vant: {ex.Message}");
             }
         }
 
@@ -134,7 +143,7 @@ namespace OperacaoFlorestal.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Erro interno ao excluir paciente: {ex.Message}");
+                return StatusCode(500, $"Erro interno ao excluir voo vant: {ex.Message}");
             }
         }
     }

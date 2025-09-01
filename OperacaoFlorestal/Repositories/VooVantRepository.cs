@@ -73,7 +73,7 @@ namespace OperacaoFlorestal.Repositories
         public async Task<IEnumerable<VooVant?>> GetByIdMaquinario(int idMaquinario)
         {
             return await _context.VooVants
-                .Where(v => v.IdEquipe == idMaquinario)
+                .Where(v => v.IdMaquinario == idMaquinario)
                 .ToListAsync();
         }
 
